@@ -1,0 +1,7 @@
+Django==4.2.30
+asgiref==3.12.1
+pillow==12.3.0
+psycopg2-binary==2.9.12
+python-decouple==3.8
+sqlparse==0.5.5
+tzdata==2026.3

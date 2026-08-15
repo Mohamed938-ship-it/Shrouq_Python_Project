@@ -1,0 +1,63 @@
+{% extends 'base.html' %} {% load humanize %} {% block title %}{{ post.title }} · Inkwell{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <article class="mb-5">
+      <div class="d-flex justify-content-between align-items-start">
+        <h1 class="mb-2">{{ post.title }}</h1>
+        {% if user == post.author %}
+        <div class="btn-group btn-group-sm">
+          <a class="btn btn-outline-secondary" href="{% url 'edit_post' post.pk %}"
+            >Edit</a
+          >
+          <a class="btn btn-outline-danger" href="{% url 'delete_post' post.pk %}"
+            >Delete</a
+          >
+        </div>
+        {% endif %}
+      </div>
+      <p class="text-muted small mb-4">
+        By {{ post.author.username }} &middot;
+        <span title="{{ post.created_at }}">{{ post.created_at|naturaltime }}</span>
+      </p>
+      <div class="p-4 bg-white rounded shadow-sm fs-5 post-body">
+        {{ post.body }}
+      </div>
+    </article>
+    <hr />
+    <section class="mb-5">
+      <h3 class="mb-4">Comments ({{ comments.count }})</h3>
+      {% if user.is_authenticated %}
+      <form method="POST" class="mb-4">
+        {% csrf_token %}
+        <div class="mb-3">
+          {{ form.body }} {% for error in form.body.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit comment</button>
+      </form>
+      {% else %}
+      <div class="alert alert-warning">
+        <a href="{% url 'login' %}?next={{ post.get_absolute_url }}">Log in</a> to
+        leave a comment.
+      </div>
+      {% endif %} {% for comment in comments %}
+      <div class="card mb-3 bg-white border-0 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-2">
+            <strong>{{ comment.author.username }}</strong>
+            <span class="text-muted small" title="{{ comment.created_at }}"
+              >{{ comment.created_at|naturaltime }}</span
+            >
+          </div>
+          <p class="card-text mb-0">{{ comment.body }}</p>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted">No comments yet — start the conversation.</p>
+      {% endfor %}
+    </section>
+  </div>
+</div>
+{% endblock %}
